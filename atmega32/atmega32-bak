@@ -1,0 +1,96 @@
+;частота процессора на внешний резонатор
+;***** STK500 LEDS and SWITCH demonstration
+.nolist
+.include "m32def.inc"
+;***** Initialization
+.list
+
+.def tmp = r16
+.def tmp1 = r17
+.def r00 = r5
+.def r01 = r6
+
+.CSEG
+
+RESET:
+rjmp START
+.org 0x00e
+rjmp ctu_0
+rjmp MAIN
+rjmp MAIN
+rjmp MAIN
+rjmp MAIN
+rjmp MAIN
+rjmp ctu_0
+rjmp MAIN
+rjmp MAIN
+rjmp MAIN
+rjmp MAIN
+rjmp MAIN
+rjmp MAIN
+rjmp MAIN
+rjmp MAIN
+rjmp MAIN
+;.org 0x0014
+rjmp ctu_0 ; Timer0 Compare
+
+;.org 0x3800
+START:
+
+ldi r16,high(RAMEND) ; Main program start
+out SPH,r16 ; Set Stack Pointer to top of RAM
+ldi r16,low(RAMEND)
+out SPL,r16
+
+ldi tmp,0
+mov r00,tmp
+ldi tmp,1
+mov r01,tmp
+
+;инициализация портов
+ser tmp
+sts 0x34,tmp
+sts 0x35,tmp
+
+ldi r20,0
+ldi r21,0
+
+;инициализация счётчика
+ldi tmp,0b10
+sts 0x59,tmp
+ldi tmp,245
+sts 0x5c,tmp
+ldi tmp,0b101
+sts 0x53,tmp
+sei
+
+MAIN:
+;add r20,r01
+;adc r21,r00
+;cpi r21,0xff
+;brne MAIN
+;add tmp,r01
+;sts 0x35,tmp
+;ldi r20,0
+;ldi r21,0
+nop
+rjmp MAIN
+
+ctu_0:
+ldi tmp,0b10
+sts 0x58,tmp
+sts 0x52,r00
+sbrs r20,0
+rjmp ctu_0_1
+mov r20,r00
+rjmp ctu_0_2
+
+ctu_0_1:
+mov r20,r01
+
+ctu_0_2:
+sts 0x35,r20
+sei
+;pop tmp
+;pop tmp
+ret
